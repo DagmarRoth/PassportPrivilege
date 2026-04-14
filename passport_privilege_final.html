@@ -1,0 +1,305 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Special+Elite&family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{--paper:#f5efe0;--paper2:#ede3cc;--gold:#b8860b;--gold2:#d4a017;--border:#c4a96b;--muted:#7a6a4a;--dark-bg:#0d0a05;}
+  body{background:var(--dark-bg);font-family:'IBM Plex Mono',monospace;color:var(--paper);min-height:100vh}
+  #app{max-width:680px;margin:0 auto;padding:1.5rem 1rem 4rem}
+  .screen{display:none;animation:fadeIn 0.4s ease}.screen.active{display:block}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .passport-book{background:linear-gradient(135deg,#1a3a5c 0%,#0d1f33 60%,#152b45 100%);border:2px solid #2a5080;border-radius:4px;padding:2rem 1.5rem;position:relative;margin-bottom:1.5rem;box-shadow:4px 4px 0 #060e18;}
+  .passport-book::before{content:'';position:absolute;left:0;top:0;bottom:0;width:12px;background:linear-gradient(90deg,#0a1825,#1a3a5c);border-radius:4px 0 0 4px;}
+  .pp-title{font-family:'DM Serif Display',serif;color:#d4af37;font-size:1.3rem;letter-spacing:0.15em;text-align:center;text-transform:uppercase;margin-bottom:0.25rem}
+  .pp-sub{font-size:0.65rem;letter-spacing:0.3em;color:#8aadcf;text-align:center;text-transform:uppercase;margin-bottom:1.5rem}
+  .pp-crest{text-align:center;font-size:2.5rem;margin-bottom:0.5rem;opacity:0.7}
+  .narr{font-family:'Special Elite',cursive;font-size:0.92rem;line-height:1.85;color:var(--paper);margin-bottom:1rem;min-height:1.4em}
+  .narr .cursor{display:inline-block;width:2px;height:1em;background:var(--gold2);vertical-align:middle;animation:blink 1s step-end infinite}
+  @keyframes blink{50%{opacity:0}}
+  .choice-list{margin-top:1.2rem;display:flex;flex-direction:column;gap:0.5rem}
+  .choice-btn{background:transparent;border:1px solid var(--border);color:var(--paper);font-family:'IBM Plex Mono',monospace;font-size:0.8rem;padding:0.6rem 1rem;text-align:left;cursor:pointer;border-radius:2px;transition:all 0.15s;display:flex;align-items:center;gap:0.5rem;}
+  .choice-btn:hover{background:rgba(180,140,60,0.15);border-color:var(--gold2);color:var(--gold2)}
+  .choice-btn::before{content:'>>';color:var(--gold);font-size:0.7rem;flex-shrink:0}
+  .search-wrap{position:relative;margin-bottom:1rem}
+  .search-input{width:100%;background:rgba(0,0,0,0.4);border:1px solid var(--border);color:var(--paper);font-family:'IBM Plex Mono',monospace;font-size:0.8rem;padding:0.6rem 1rem;border-radius:2px;outline:none;}
+  .search-input::placeholder{color:var(--muted)}.search-input:focus{border-color:var(--gold2)}
+  .country-list{background:#0d0a05;border:1px solid var(--border);border-top:none;max-height:200px;overflow-y:auto;border-radius:0 0 2px 2px;}
+  .country-opt{padding:0.45rem 1rem;font-size:0.78rem;cursor:pointer;color:var(--paper2);transition:background 0.1s;}
+  .country-opt:hover{background:rgba(180,140,60,0.2);color:var(--gold2)}
+  .tier-card{border:1px solid;padding:1.2rem;border-radius:2px;margin:1rem 0;text-align:center;}
+  .tier-1{border-color:#d4af37;background:rgba(212,175,55,0.08)}.tier-2{border-color:#4a9eda;background:rgba(74,158,218,0.08)}
+  .tier-3{border-color:#e67e22;background:rgba(230,126,34,0.08)}.tier-4{border-color:#e74c3c;background:rgba(231,76,60,0.08)}
+  .tier-label{font-family:'DM Serif Display',serif;font-size:1.5rem;margin-bottom:0.25rem}
+  .tier-1 .tier-label{color:#d4af37}.tier-2 .tier-label{color:#4a9eda}.tier-3 .tier-label{color:#e67e22}.tier-4 .tier-label{color:#e74c3c}
+  .tier-count{font-size:0.75rem;color:var(--muted);letter-spacing:0.05em}
+  .agent-panel{display:flex;gap:1rem;align-items:flex-start;margin:1rem 0;background:rgba(0,0,0,0.3);border:1px solid rgba(180,50,50,0.4);border-radius:2px;padding:0.9rem;}
+  .agent-avatar{width:52px;height:52px;border-radius:2px;flex-shrink:0;background:#1a0a0a;border:1px solid rgba(180,50,50,0.5);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:1.5rem;position:relative;}
+  .agent-badge{position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);background:#8b0000;color:#f5efe0;font-size:0.5rem;padding:1px 4px;letter-spacing:0.05em;white-space:nowrap;font-family:'IBM Plex Mono',monospace;border-radius:1px;}
+  .agent-speech{flex:1}
+  .agent-name{font-size:0.6rem;letter-spacing:0.15em;color:rgba(180,50,50,0.9);text-transform:uppercase;margin-bottom:0.3rem}
+  .agent-line{font-family:'Special Elite',cursive;font-size:0.82rem;line-height:1.6;color:var(--paper2)}
+  .dest-card{background:rgba(255,255,255,0.03);border:1px solid rgba(196,169,107,0.3);padding:1rem 1.2rem;border-radius:2px;margin-bottom:0.75rem;}
+  .dest-name{font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--paper);margin-bottom:0.3rem}
+  .dest-flavor{font-size:0.72rem;color:var(--muted);margin-bottom:0.75rem;line-height:1.5}
+  .stamp{display:inline-block;padding:0.3rem 0.75rem;border:2px solid;border-radius:2px;font-family:'Special Elite',cursive;font-size:0.75rem;letter-spacing:0.1em;transform:rotate(-2deg);font-weight:bold;animation:stampIn 0.3s cubic-bezier(0.34,1.56,0.64,1);}
+  @keyframes stampIn{from{opacity:0;transform:rotate(-2deg) scale(0.3)}to{opacity:1;transform:rotate(-2deg) scale(1)}}
+  .stamp-free{color:#27ae60;border-color:#27ae60;background:rgba(39,174,96,0.1)}
+  .stamp-req{color:#e74c3c;border-color:#e74c3c;background:rgba(231,76,60,0.1)}
+  .stamp-unk{color:#e67e22;border-color:#e67e22;background:rgba(230,126,0.1)}
+  .progress-bar{height:3px;background:rgba(196,169,107,0.2);border-radius:2px;margin-bottom:1.5rem;overflow:hidden;}
+  .progress-fill{height:100%;background:var(--gold);transition:width 0.4s ease;border-radius:2px}
+  .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin:1rem 0}
+  .stat-box{background:rgba(255,255,255,0.04);border:1px solid rgba(196,169,107,0.25);padding:0.85rem;border-radius:2px;text-align:center}
+  .stat-num{font-family:'DM Serif Display',serif;font-size:1.8rem;color:var(--gold2)}
+  .stat-label{font-size:0.65rem;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-top:0.2rem}
+  .compare-row{display:flex;align-items:center;gap:0.75rem;padding:0.5rem 0;border-bottom:1px solid rgba(196,169,107,0.15);font-size:0.75rem;}
+  .compare-country{flex:1;color:var(--paper2)}
+  .compare-count{color:var(--muted);font-size:0.7rem;white-space:nowrap}
+  .compare-bar-wrap{width:80px;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;flex-shrink:0}
+  .compare-bar{height:100%;border-radius:2px;transition:width 0.6s ease 0.3s}
+  .divider{border:none;border-top:1px solid rgba(196,169,107,0.2);margin:1rem 0}
+  .muted{color:var(--muted);font-size:0.75rem}
+  .gold{color:var(--gold2)}
+  .section-label{font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:0.5rem}
+  .restart-btn{background:transparent;border:1px solid rgba(196,169,107,0.4);color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:0.72rem;padding:0.5rem 1rem;cursor:pointer;border-radius:2px;margin-top:1.5rem;transition:all 0.15s;}
+  .restart-btn:hover{border-color:var(--gold);color:var(--gold)}
+  #dest-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;margin-top:1rem}
+  .dest-pick-btn{background:rgba(255,255,255,0.03);border:1px solid rgba(196,169,107,0.3);color:var(--paper2);font-family:'IBM Plex Mono',monospace;font-size:0.72rem;padding:0.65rem 0.75rem;cursor:pointer;border-radius:2px;text-align:left;transition:all 0.15s;line-height:1.3;}
+  .dest-pick-btn:hover{background:rgba(180,140,60,0.12);border-color:var(--gold);color:var(--gold2)}
+  .dest-pick-btn .d-emoji{font-size:0.9rem;display:block;margin-bottom:0.2rem}
+  .result-dest{display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid rgba(196,169,107,0.12);font-size:0.75rem;}
+  .result-dest-name{color:var(--paper2)}
+  ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(196,169,107,0.3);border-radius:2px}
+</style>
+
+<h2 class="sr-only" style="position:absolute;left:-9999px">Passport Privilege — An interactive narrative game about global mobility</h2>
+
+<div id="app">
+
+<div class="screen active" id="s-title">
+  <div class="passport-book">
+    <div class="pp-crest">📘</div>
+    <div class="pp-title">Passport Privilege</div>
+    <div class="pp-sub">An interactive narrative · Henley Index 2026</div>
+    <hr class="divider">
+    <div class="narr" id="intro-narr"></div>
+    <div class="choice-list" id="intro-choices" style="display:none">
+      <button class="choice-btn" onclick="goTo('s-pick')">I'm ready. Show me my passport.</button>
+    </div>
+  </div>
+  <p class="muted" style="text-align:center;font-size:0.65rem;letter-spacing:0.05em">Based on Henley Passport Index data · March 2026 · 199 countries</p>
+</div>
+
+<div class="screen" id="s-pick">
+  <div class="passport-book">
+    <div class="pp-title" style="font-size:0.9rem;margin-bottom:1rem">Passport Privilege</div>
+    <div class="agent-panel" style="margin-bottom:1rem">
+      <div class="agent-avatar">👮‍♀️<div class="agent-badge">DHS / TSA</div></div>
+      <div class="agent-speech">
+        <div class="agent-name">Agent K. Noem · Checkpoint Alpha</div>
+        <div class="agent-line">"Step up to the line. Passport and boarding pass out. I've got all day and I will use every second of it."</div>
+      </div>
+    </div>
+    <p class="narr" style="min-height:0;margin-bottom:1rem;font-size:0.82rem">She slides the form across without making eye contact. <span class="gold">Country of citizenship?</span></p>
+    <div class="search-wrap">
+      <input class="search-input" id="country-search" type="text" placeholder="Type a country name..." oninput="filterCountries(this.value)" autocomplete="off">
+      <div class="country-list" id="country-list"></div>
+    </div>
+    <div id="pick-confirm" style="display:none">
+      <hr class="divider">
+      <p class="narr" style="min-height:0;font-size:0.82rem">You hold a <span class="gold" id="confirm-country-name"></span> passport.</p>
+      <div class="choice-list">
+        <button class="choice-btn" onclick="confirmPassport()">That's correct. Proceed.</button>
+        <button class="choice-btn" onclick="resetPick()">Wait — let me change that.</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="s-reveal">
+  <div class="passport-book">
+    <div class="pp-sub" style="margin-bottom:0.75rem">passport privilege · analysis</div>
+    <div class="pp-title" id="reveal-country-name" style="margin-bottom:0.5rem"></div>
+    <div class="tier-card" id="reveal-tier-card">
+      <div class="tier-label" id="reveal-tier-name"></div>
+      <div class="tier-count" id="reveal-tier-count"></div>
+    </div>
+    <div class="agent-panel" id="reveal-agent-panel">
+      <div class="agent-avatar">👮‍♀️<div class="agent-badge">DHS / TSA</div></div>
+      <div class="agent-speech">
+        <div class="agent-name">Agent K. Noem · Checkpoint Alpha</div>
+        <div class="agent-line" id="reveal-agent-line"></div>
+      </div>
+    </div>
+    <div class="narr" id="reveal-narr"></div>
+    <div class="choice-list" id="reveal-choices" style="display:none">
+      <button class="choice-btn" onclick="goTo('s-journey')">Begin the journey.</button>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="s-journey">
+  <div style="margin-bottom:1rem">
+    <div class="progress-bar"><div class="progress-fill" id="journey-progress" style="width:0%"></div></div>
+    <p class="section-label">Destination <span id="dest-num">1</span> of 5</p>
+  </div>
+  <div class="passport-book">
+    <div class="narr" id="journey-prompt" style="margin-bottom:0.75rem"></div>
+    <div id="dest-grid"></div>
+  </div>
+</div>
+
+<div class="screen" id="s-gate">
+  <div style="margin-bottom:1rem">
+    <div class="progress-bar"><div class="progress-fill" id="gate-progress" style="width:0%"></div></div>
+  </div>
+  <div class="passport-book">
+    <div class="dest-card">
+      <div class="dest-name" id="gate-dest-name"></div>
+      <div class="dest-flavor" id="gate-dest-flavor"></div>
+      <div id="gate-stamp-wrap"></div>
+    </div>
+    <div class="agent-panel">
+      <div class="agent-avatar">👮‍♀️<div class="agent-badge">DHS / TSA</div></div>
+      <div class="agent-speech">
+        <div class="agent-name">Agent K. Noem · Checkpoint Alpha</div>
+        <div class="agent-line" id="gate-agent-line">...</div>
+      </div>
+    </div>
+    <div class="narr" id="gate-narr"></div>
+    <div class="choice-list" id="gate-choices" style="display:none">
+      <button class="choice-btn" id="gate-continue-btn">Continue →</button>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="s-final">
+  <div class="passport-book">
+    <div class="pp-sub" style="margin-bottom:0.5rem">passport privilege · journey complete</div>
+    <div class="pp-title" id="final-title" style="margin-bottom:1rem"></div>
+    <div class="stat-grid" id="final-stats"></div>
+    <hr class="divider">
+    <div class="agent-panel">
+      <div class="agent-avatar">👮‍♀️<div class="agent-badge">DHS / TSA</div></div>
+      <div class="agent-speech">
+        <div class="agent-name">Agent K. Noem · Final Debrief</div>
+        <div class="agent-line" id="final-agent-line"></div>
+      </div>
+    </div>
+    <div class="narr" id="final-narr" style="margin-bottom:1rem"></div>
+    <div id="final-dest-list"></div>
+    <hr class="divider">
+    <p class="section-label">How you compare</p>
+    <div id="compare-list"></div>
+    <hr class="divider">
+    <div class="narr" id="final-coda" style="font-size:0.8rem;color:var(--muted)"></div>
+  </div>
+  <div style="text-align:center">
+    <button class="restart-btn" onclick="restart()">↺ Play again with a different passport</button>
+  </div>
+</div>
+
+</div>
+
+<script>
+const GAME_DATA = {"c":{"Afghanistan":24,"Albania":121,"Algeria":55,"Andorra":169,"Angola":48,"Antigua and Barbuda":154,"Argentina":168,"Armenia":64,"Australia":182,"Austria":184,"Azerbaijan":67,"Bahamas":158,"Bahrain":87,"Bangladesh":36,"Barbados":163,"Belarus":77,"Belgium":185,"Belize":100,"Benin":65,"Bhutan":47,"Bolivia":77,"Bosnia and Herzegovina":121,"Botswana":82,"Brazil":168,"Brunei":163,"Bulgaria":177,"Burkina Faso":56,"Burundi":48,"Cambodia":47,"Cameroon":47,"Canada":182,"Cape Verde Islands":63,"Central African Republic":48,"Chad":51,"Chile":174,"China":82,"Colombia":130,"Comoro Islands":50,"Congo (Dem. Rep.)":43,"Congo (Rep.)":46,"Costa Rica":148,"Cote d'Ivoire":55,"Croatia":181,"Cuba":56,"Cyprus":174,"Czechia":182,"Denmark":185,"Djibouti":45,"Dominica":145,"Dominican Republic":71,"Ecuador":93,"Egypt":49,"El Salvador":131,"Equatorial Guinea":52,"Eritrea":38,"Estonia":181,"Ethiopia":42,"Fiji":87,"Finland":185,"France":185,"Gabon":55,"Georgia":120,"Germany":185,"Ghana":67,"Greece":184,"Grenada":147,"Guatemala":132,"Guinea":52,"Guinea-Bissau":50,"Guyana":88,"Haiti":49,"Honduras":129,"Hong Kong (SAR China)":174,"Hungary":183,"Iceland":179,"India":56,"Indonesia":70,"Iran":40,"Iraq":29,"Ireland":185,"Israel":166,"Italy":185,"Jamaica":85,"Japan":187,"Jordan":49,"Kazakhstan":78,"Kenya":69,"Kiribati":122,"Kosovo":81,"Kuwait":96,"Kyrgyzstan":59,"Laos":45,"Latvia":182,"Lebanon":43,"Lesotho":73,"Liberia":49,"Libya":39,"Liechtenstein":180,"Lithuania":180,"Luxembourg":185,"Macao (SAR China)":141,"Madagascar":55,"Malawi":70,"Malaysia":183,"Maldives":92,"Mali":53,"Malta":184,"Marshall Islands":127,"Mauritania":55,"Mauritius":147,"Mexico":156,"Micronesia":120,"Moldova":119,"Monaco":176,"Mongolia":64,"Montenegro":126,"Morocco":71,"Mozambique":59,"Myanmar":42,"Namibia":75,"Nauru":86,"Nepal":35,"Netherlands":185,"New Zealand":182,"Nicaragua":125,"Niger":54,"Nigeria":44,"North Korea":35,"North Macedonia":126,"Norway":185,"Oman":84,"Pakistan":31,"Palau Islands":119,"Palestinian Territory":39,"Panama":147,"Papua New Guinea":84,"Paraguay":145,"Peru":141,"Philippines":65,"Poland":183,"Portugal":184,"Qatar":111,"Romania":177,"Russian Federation":113,"Rwanda":66,"Samoa":129,"San Marino":166,"Sao Tome and Principe":58,"Saudi Arabia":87,"Senegal":56,"Serbia":135,"Seychelles":154,"Sierra Leone":62,"Singapore":192,"Slovakia":182,"Slovenia":182,"Solomon Islands":132,"Somalia":32,"South Africa":100,"South Korea":187,"South Sudan":41,"Spain":185,"Sri Lanka":39,"St. Kitts and Nevis":157,"St. Lucia":144,"St. Vincent and the Grenadines":157,"Sudan":41,"Suriname":75,"Sweden":186,"Switzerland":185,"Syria":26,"Taiwan (Chinese Taipei)":134,"Tajikistan":53,"Tanzania":68,"Thailand":76,"The Gambia":68,"Timor-Leste":92,"Togo":57,"Tonga":127,"Trinidad and Tobago":145,"Tunisia":66,"Turkmenistan":45,"Tuvalu":125,"Türkiye":113,"Uganda":65,"Ukraine":142,"United Arab Emirates":187,"United Kingdom":183,"United States":179,"Uruguay":155,"Uzbekistan":59,"Vanuatu":88,"Vatican City":151,"Venezuela":116,"Vietnam":48,"Yemen":31,"Zambia":64,"Zimbabwe":61,"eSwatini":71},"d":["United States","United Kingdom","France","Japan","Australia","Brazil","South Africa","United Arab Emirates","Thailand","India","Mexico","Kenya","Russia","China","Saudi Arabia","New Zealand","Turkey","Morocco","Singapore","Argentina"],"a":{"Afghanistan":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,2,0,0,0],"Albania":[0,0,1,0,0,1,0,1,1,0,0,1,2,1,1,0,2,0,1,0],"Algeria":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,2,1,0,0],"Andorra":[1,1,1,1,1,1,1,1,1,0,1,1,2,1,1,1,2,1,1,1],"Angola":[0,0,0,0,0,0,1,0,0,0,0,1,2,0,0,0,2,0,1,0],"Antigua and Barbuda":[0,1,1,0,0,1,1,0,0,0,0,1,2,1,0,0,2,0,1,0],"Argentina":[0,1,1,1,0,1,1,1,1,0,1,1,2,1,0,1,2,1,1,0],"Armenia":[0,0,0,0,0,1,0,1,1,0,0,1,2,1,0,0,2,0,0,1],"Australia":[1,1,1,1,0,0,1,1,1,0,1,1,2,1,1,1,2,1,1,1],"Austria":[1,1,1,1,1,1,1,1,1,0,1,1,2,1,1,1,2,1,1,1],"Azerbaijan":[0,0,0,0,0,0,0,1,0,0,0,1,2,1,1,0,2,1,0,0],"Bahamas":[0,1,1,1,0,1,1,1,0,0,1,1,2,1,1,0,2,0,1,0],"Bahrain":[0,1,0,0,0,0,0,1,1,0,0,1,2,1,1,1,2,1,1,0],"Bangladesh":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,2,0,0,0],"Barbados":[0,1,1,1,0,1,1,1,0,0,1,1,2,1,1,0,2,0,1,1],"Belarus":[0,0,0,0,0,1,0,1,1,0,0,1,2,1,0,0,2,0,0,1],"Belgium":[1,1,1,1,1,1,1,1,1,0,1,1,2,1,1,1,2,1,1,1],"Belize":[0,1,0,0,0,1,1,0,0,0,1,1,2,0,0,0,2,0,1,0],"Benin":[0,0,0,0,0,0,1,0,0,0,0,1,2,0,0,0,2,0,1,0],"Bhutan":[0,0,0,0,0,0,0,0,1,1,0,1,2,0,0,0,2,0,1,0],"Bolivia":[0,0,0,0,0,1,1,0,1,0,1,1,2,0,0,0,2,0,1,1],"Bosnia and Herzegovina":[0,0,1,0,0,1,0,1,0,0,0,1,2,1,0,0,2,0,1,1],"Botswana":[0,0,0,0,0,1,1,0,0,0,0,1,2,0,0,0,2,0,1,0],"Brazil":[0,1,1,1,0,0,1,1,1,0,0,1,2,1,0,1,2,1,1,1],"Brunei":[1,1,1,1,1,0,0,1,1,0,0,1,2,1,1,1,2,0,1,0],"Bulgaria":[0,1,1,1,0,1,1,1,1,0,1,1,2,1,1,1,2,1,1,1],"Burkina Faso":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,2,1,1,0],"Burundi":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,2,0,1,0],"Cambodia":[0,0,0,0,0,0,0,0,1,0,0,1,2,0,0,0,2,0,1,0],"Cameroon":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,2,0,1,0],"Canada":[1,1,1,1,1,0,1,1,1,0,1,1,2,1,1,1,2,1,1,1],"Cape Verde Islands":[0,0,0,0,0,0,1,0,0,0,0,1,2,0,0,0,2,1,1,0],"Central African Republic":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,2,0,1,0],"Chad":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,2,0,1,0],"Chile":[1,1,1,1,0,1,1,1,1,0,1,1,2,1,0,1,2,1,1,1],"China":[0,0,0,0,0,0,0,1,1,0,0,1,2,0,1,0,2,1,1,0],"Colombia":[0,0,1,0,0,1,0,1,1,0,1,1,2,0,0,0,2,1,1,1],"Comoro Islands":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,2,0,1,0],"Congo (Dem. Rep.)":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,2,0,1,0],"Congo (Rep.)":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,2,1,1,0],"Costa Rica":[0,1,1,1,0,1,1,1,1,0,1,1,2,0,0,0,2,0,1,1],"Cote d'Ivoire":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,2,1,1,0],"Croatia":[1,1,1,1,0,1,1,1,1,0,1,1,2,1,1,1,2,1,1,1],"Cuba":[0,0,0,0,0,0,0,0,1,0,0,1,2,0,0,0,2,0,1,0],"Cyprus":[0,1,1,1,0,1,1,1,1,0,1,1,2,1,1,1,2,1,1,1],"Czechia":[1,1,1,1,0,1,1,1,1,0,1,1,2,0,1,1,2,1,1,1],"Denmark":[1,1,1,1,1,1,1,1,1,0,1,1,2,1,1,1,2,1,1,1],"Djibouti":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,2,0,1,0],"Dominica":[0,0,1,0,0,1,0,0,1,0,0,1,2,1,0,0,2,0,1,1],"Dominican Republic":[0,0,0,1,0,1,0,0,1,0,0,1,2,0,0,0,2,1,1,0],"Ecuador":[0,0,0,0,0,1,1,0,1,0,0,1,2,1,0,0,2,1,1,1],"Egypt":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,2,0,0,0],"El Salvador":[0,0,1,1,0,1,0,1,1,0,0,1,2,0,0,0,2,0,1,1],"Equatorial Guinea":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,2,0,1,0],"Eritrea":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,2,0,1,0],"Estonia":[1,1,1,1,0,1,1,1,1,0,1,1,2,1,1,1,2,1,1,1],"Ethiopia":[0,0,0,0,0,0,0,0,1,0,0,1,2,0,0,0,2,0,1,0],"Fiji":[0,0,0,0,0,1,0,1,1,0,0,1,2,1,0,0,2,0,1,1],"Finland":[1,1,1,1,1,1,1,1,1,0,1,1,2,1,1,1,2,1,1,1],"France":[1,1,0,1,1,1,1,1,1,0,1,1,2,1,1,1,2,1,1,1],"Gabon":[0,0,0,0,0,0,1,0,0,0,0,1,2,0,0,0,2,1,1,0],"Georgia":[0,0,1,0,0,1,0,1,1,0,0,1,2,1,1,0,2,0,0,1],"Germany":[1,1,1,1,1,1,1,1,1,0,1,1,2,1,1,1,2,1,1,1],"Ghana":[0,0,0,0,0,0,1,0,0,0,0,1,2,0,0,0,2,1,1,0],"Greece":[1,1,1,1,1,1,1,1,1,0,1,1,2,1,1,1,2,1,1,1],"Grenada":[0,1,1,0,0,1,0,0,0,0,0,1,2,1,1,0,2,0,1,1],"Guatemala":[0,1,1,1,0,1,0,0,1,0,0,1,2,0,0,0,2,0,1,1],"Guinea":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,2,1,1,0],"Guinea-Bissau":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,2,0,1,0],"Guyana":[0,1,0,0,0,1,1,1,0,0,0,1,2,0,0,0,2,0,1,1],"Haiti":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,2,0,1,0],"Honduras":[0,0,1,1,0,1,0,1,0,0,0,1,2,0,0,0,2,0,1,1],"Hong Kong (SAR China)":[0,1,1,1,1,1,1,1,1,0,1,1,2,0,1,1,2,1,1,1],"Hungary":[1,1,1,1,0,1,1,1,1,0,1,1,2,1,1,1,2,1,1,1],"Iceland":[1,1,1,1,1,1,1,1,1,0,1,1,2,1,1,1,2,1,1,1],"India":[0,0,0,0,0,0,0,0,1,0,0,1,2,0,0,0,2,0,0,0],"Indonesia":[0,0,0,1,0,1,0,0,1,0,0,1,2,0,0,0,2,1,1,0],"Iran":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,2,0,0,0],"Iraq":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,2,0,0,0],"Ireland":[1,1,1,1,1,1,1,1,1,0,1,1,2,1,1,1,2,1,1,1],"Israel":[1,1,1,1,0,1,1,1,1,0,1,1,2,0,0,1,2,0,1,1],"Italy":[1,1,1,1,1,1,1,1,1,0,1,1,2,1,1,1,2,1,1,1],"Jamaica":[0,0,0,0,0,1,1,0,1,0,1,1,2,0,0,0,2,0,1,1],"Japan":[1,1,1,0,1,1,1,1,1,1,1,1,2,1,1,1,2,1,1,1],"Jordan":[0,0,0,0,0,0,1,0,1,0,0,1,2,0,0,0,2,0,0,0],"Kazakhstan":[0,0,0,0,0,1,0,1,1,0,0,1,2,1,1,0,2,1,0,1],"Kenya":[0,0,0,0,0,0,1,0,0,0,0,0,2,0,0,0,2,0,1,0],"Kiribati":[0,1,1,0,0,0,0,1,0,0,0,1,2,0,0,0,2,0,1,0],"Kosovo":[0,0,1,0,0,0,0,1,1,0,0,1,2,0,0,0,2,0,0,0],"Kuwait":[0,1,0,0,0,0,0,1,1,0,0,1,2,1,1,1,2,1,1,0],"Kyrgyzstan":[0,0,0,0,0,0,0,0,1,0,0,1,2,0,1,0,2,0,0,0],"Laos":[0,0,0,0,0,0,0,0,1,0,0,1,2,0,0,0,2,0,1,0],"Latvia":[1,1,1,1,0,1,1,1,1,0,1,1,2,1,1,1,2,1,1,1],"Lebanon":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,2,0,0,0],"Lesotho":[0,0,0,1,0,0,1,0,0,0,0,1,2,0,0,0,2,0,1,0],"Liberia":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,2,0,1,0],"Libya":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,2,0,0,0],"Liechtenstein":[1,1,1,1,1,1,1,1,1,0,1,1,2,1,1,1,2,1,1,1],"Lithuania":[1,1,1,1,0,1,1,1,1,0,1,1,2,0,1,1,2,1,1,1],"Luxembourg":[1,1,1,1,1,1,1,1,1,0,1,1,2,1,1,1,2,1,1,1],"Macao (SAR China)":[0,1,1,1,0,1,1,0,1,0,1,1,2,0,1,1,2,1,1,1],"Madagascar":[0,0,0,0,0,0,1,0,0,0,0,1,2,0,0,0,2,0,1,0],"Malawi":[0,0,0,0,0,0,1,0,0,0,0,1,2,0,0,0,2,0,1,0],"Malaysia":[0,1,1,1,1,1,1,1,1,0,1,1,2,1,1,1,2,1,1,1],"Maldives":[0,1,0,0,0,0,1,1,1,1,0,1,2,1,1,0,2,1,1,0],"Mali":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,2,1,0,0],"Malta":[1,1,1,1,1,1,1,1,1,0,1,1,2,1,1,1,2,1,1,1],"Marshall Islands":[1,1,1,0,0,0,0,0,0,0,1,1,2,0,0,0,2,0,1,0],"Mauritania":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,2,0,1,0],"Mauritius":[0,1,1,1,0,0,1,1,1,0,0,1,2,1,1,1,2,0,1,0],"Mexico":[0,1,1,1,0,1,0,1,1,0,0,1,2,0,0,1,2,1,1,1],"Micronesia":[1,1,1,0,0,0,0,0,0,0,1,1,2,0,0,0,2,0,1,0],"Moldova":[0,0,1,0,0,1,0,1,0,0,0,1,2,0,0,0,2,0,0,0],"Monaco":[1,1,1,1,1,1,1,1,1,0,1,1,2,1,1,1,2,1,1,1],"Mongolia":[0,0,0,0,0,1,0,1,1,0,0,1,2,0,0,0,2,0,1,1],"Montenegro":[0,0,1,1,0,1,0,1,0,0,0,1,2,1,1,0,2,0,1,1],"Morocco":[0,0,0,0,0,1,0,0,1,0,0,1,2,0,0,0,2,0,0,0],"Mozambique":[0,0,0,0,0,0,1,0,0,0,0,1,2,0,0,0,2,0,1,0],"Myanmar":[0,0,0,0,0,0,0,0,1,0,0,1,2,0,0,0,2,0,1,0],"Namibia":[0,0,0,0,0,1,1,0,1,0,0,1,2,0,0,0,2,0,1,0],"Nauru":[0,0,0,0,0,0,0,1,1,0,0,1,2,0,0,0,2,0,1,0],"Nepal":[0,0,0,0,0,0,0,0,0,1,0,1,2,0,0,0,2,0,1,0],"Netherlands":[1,1,1,1,1,1,1,1,1,0,1,1,2,1,1,1,2,1,1,1],"New Zealand":[1,1,1,1,1,1,1,1,1,0,1,1,2,1,1,0,2,1,1,1],"Nicaragua":[0,0,1,0,0,1,0,0,0,0,0,1,2,0,0,0,2,0,1,1],"Niger":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,2,1,1,0],"Nigeria":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,2,0,0,0],"North Korea":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,2,0,0,0],"North Macedonia":[0,0,1,1,0,1,0,0,0,0,0,1,2,1,0,0,2,0,1,1],"Norway":[1,1,1,1,1,1,1,1,1,0,1,1,2,1,1,1,2,1,1,1],"Oman":[0,1,0,0,0,0,0,1,1,0,0,1,2,1,1,1,2,1,1,0],"Pakistan":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,2,0,0,0],"Palau Islands":[1,1,1,0,0,0,0,0,0,0,1,1,2,0,0,0,2,0,1,0],"Palestinian Territory":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,2,0,0,0],"Panama":[0,1,1,1,0,1,1,0,1,0,1,1,2,0,1,0,2,0,1,1],"Papua New Guinea":[0,1,0,0,0,0,0,1,1,0,0,1,2,0,0,0,2,0,1,0],"Paraguay":[0,1,1,1,0,1,1,1,1,0,1,1,2,0,0,0,2,0,1,1],"Peru":[0,1,1,1,0,1,1,1,1,0,0,1,2,1,0,0,2,1,1,1],"Philippines":[0,0,0,0,0,1,0,0,1,0,0,1,2,0,0,0,2,1,1,0],"Poland":[1,1,1,1,0,1,1,1,1,0,1,1,2,1,1,1,2,1,1,1],"Portugal":[1,1,1,1,1,1,1,1,1,0,1,1,2,1,1,1,2,1,1,1],"Qatar":[1,1,0,1,0,1,1,1,1,0,0,1,2,1,1,1,2,1,1,1],"Romania":[0,1,1,1,0,1,1,1,1,0,1,1,2,1,1,1,2,1,1,1],"Russian Federation":[0,0,0,0,0,1,1,1,1,0,1,1,2,1,1,0,2,1,0,1],"Rwanda":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,2,0,1,0],"Samoa":[0,1,1,0,0,0,0,0,0,0,0,1,2,0,0,0,2,0,1,0],"San Marino":[1,1,1,1,1,1,1,1,1,0,1,1,2,1,1,1,2,1,1,1],"Sao Tome and Principe":[0,0,0,0,0,0,1,0,0,0,0,1,2,0,0,0,2,0,1,0],"Saudi Arabia":[0,1,0,0,0,0,1,1,1,0,0,1,2,1,0,1,2,1,1,0],"Senegal":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,2,1,1,0],"Serbia":[0,0,1,1,0,1,0,1,1,0,0,1,2,1,0,0,2,0,1,1],"Seychelles":[0,1,1,0,0,1,1,1,1,0,0,1,2,1,1,1,2,0,1,0],"Sierra Leone":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,2,0,1,0],"Singapore":[1,1,1,1,1,1,1,1,1,0,1,1,2,1,1,1,2,1,0,1],"Slovakia":[1,1,1,1,0,1,1,1,1,0,1,1,2,1,1,1,2,1,1,1],"Slovenia":[1,1,1,1,0,1,1,1,1,0,1,1,2,1,1,1,2,1,1,1],"Solomon Islands":[0,1,1,0,0,0,0,1,0,0,0,1,2,1,0,0,2,0,1,0],"Somalia":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,2,0,0,0],"South Africa":[0,0,0,0,0,1,0,0,1,0,0,1,2,0,1,0,2,0,1,1],"South Korea":[1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,2,1,1,1],"South Sudan":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,2,0,1,0],"Spain":[1,1,1,1,1,1,1,1,1,0,1,1,2,1,1,1,2,1,1,1],"Sri Lanka":[0,0,0,0,0,0,0,0,1,0,0,1,2,0,0,0,2,0,1,0],"St. Kitts and Nevis":[0,1,1,0,0,1,0,0,0,0,0,1,2,0,1,0,2,0,1,1],"St. Lucia":[0,0,1,0,0,1,0,0,0,0,0,1,2,0,0,0,2,0,1,1],"St. Vincent and the Grenadines":[0,1,1,0,0,1,1,1,0,0,0,1,2,0,0,0,2,0,1,1],"Sudan":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,2,0,0,0],"Suriname":[0,0,0,1,0,1,0,0,0,0,0,1,2,1,0,0,2,0,1,1],"Sweden":[1,1,1,1,1,1,1,1,1,0,1,1,2,1,1,1,2,1,1,1],"Switzerland":[1,1,1,1,1,1,1,1,1,0,1,1,2,1,1,1,2,1,1,1],"Syria":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,2,0,0,0],"Taiwan (Chinese Taipei)":[1,1,1,1,1,0,0,0,1,0,0,1,2,1,0,1,2,0,1,0],"Tajikistan":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,1,0,2,0,0,0],"Tanzania":[0,0,0,0,0,0,1,0,0,0,0,1,2,0,0,0,2,0,1,0],"Thailand":[0,0,0,1,0,1,1,0,0,0,0,1,2,1,1,0,2,0,1,1],"The Gambia":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,2,0,1,0],"Timor-Leste":[0,0,1,0,0,0,0,0,1,0,0,1,2,0,0,0,2,0,1,0],"Togo":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,2,1,1,0],"Tonga":[0,1,1,0,0,0,0,0,1,0,0,1,2,1,0,0,2,0,1,0],"Trinidad and Tobago":[0,0,1,0,0,1,1,0,1,0,1,1,2,0,0,0,2,0,1,1],"Tunisia":[0,0,0,1,0,1,1,0,1,0,0,1,2,0,0,0,2,1,0,0],"Turkmenistan":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,2,0,0,0],"Tuvalu":[0,1,1,0,0,0,0,0,0,0,0,1,2,0,0,0,2,0,1,0],"Türkiye":[0,0,0,1,0,1,1,0,1,0,1,1,2,0,1,0,2,1,1,1],"Uganda":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,2,0,1,0],"Ukraine":[0,0,1,0,0,1,0,1,1,0,1,1,2,0,1,0,2,0,0,1],"United Arab Emirates":[0,1,1,1,0,1,1,0,1,0,1,1,2,1,1,1,2,1,1,1],"United Kingdom":[1,0,1,1,1,1,1,1,1,0,1,1,2,1,1,1,2,1,1,1],"United States":[0,1,1,1,1,0,1,1,1,0,1,1,2,0,1,1,2,1,1,1],"Uruguay":[0,1,1,1,0,1,1,1,1,0,1,1,2,1,0,1,2,0,1,1],"Uzbekistan":[0,0,0,0,0,0,0,1,1,0,0,1,2,1,1,0,2,0,0,0],"Vanuatu":[0,0,0,0,0,0,0,0,1,0,0,1,2,0,0,0,2,0,1,0],"Vatican City":[0,1,1,0,1,1,0,1,0,0,1,1,2,0,0,1,2,0,1,1],"Venezuela":[0,0,1,0,0,1,1,0,1,0,0,1,2,0,0,0,2,0,1,1],"Vietnam":[0,0,0,0,0,0,0,0,1,0,0,1,2,0,0,0,2,0,1,0],"Yemen":[0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,2,0,0,0],"Zambia":[0,0,0,0,0,0,1,0,0,0,0,1,2,0,0,0,2,0,1,0],"Zimbabwe":[0,0,0,0,0,0,1,0,0,0,0,1,2,0,0,0,2,0,1,0],"eSwatini":[0,0,0,0,0,0,1,0,0,0,0,1,2,0,0,0,2,0,1,0]}};
+
+const DEST_INFO={"United States":{emoji:"🗽",flavor:"The land of liberty and visa paperwork. Home to Hollywood, the Grand Canyon, and one of the most sought-after tourist destinations on earth."},"United Kingdom":{emoji:"🎡",flavor:"Buckingham Palace, Big Ben, the rolling hills of the Cotswolds. The former empire now processes visa applications at a notable pace."},"France":{emoji:"🗼",flavor:"The most visited country on earth. Croissants, the Louvre, and a visa regime tied to the Schengen Agreement."},"Japan":{emoji:"⛩️",flavor:"Cherry blossoms, bullet trains, ancient temples. Japan has opened its borders significantly — but not to everyone equally."},"Australia":{emoji:"🦘",flavor:"The vast red centre, the Great Barrier Reef, cities that routinely top livability surveys. Access is strictly controlled."},"Brazil":{emoji:"🌴",flavor:"The Amazon, Carnival, Copacabana. South America's largest nation has complex bilateral visa arrangements."},"South Africa":{emoji:"🦁",flavor:"The Garden Route, Table Mountain, world-class wine country. A surprising number of passports get in easily."},"United Arab Emirates":{emoji:"🏙️",flavor:"Dubai's skyline, Abu Dhabi's grandeur. The UAE has emerged as one of the world's most welcoming destinations."},"Thailand":{emoji:"🏯",flavor:"Street food, tropical islands, Buddhist temples. Thailand offers visa-on-arrival or exemptions to most of the world."},"India":{emoji:"🕌",flavor:"The Taj Mahal, the Himalayas, a billion stories. India's e-Visa has opened doors, but not for every passport."},"Mexico":{emoji:"🌵",flavor:"Ancient pyramids, tequila country, Pacific coastlines. Mexico is remarkably open to most of the world."},"Kenya":{emoji:"🦒",flavor:"The Maasai Mara, Kilimanjaro on the horizon, Nairobi's energy. Kenya is notably welcoming to almost all passports."},"Russia":{emoji:"🏛️",flavor:"St. Petersburg's palaces, the Trans-Siberian railway. Geopolitical tensions have made travel data complex here."},"China":{emoji:"🐉",flavor:"The Great Wall, Shanghai's skyline, ancient civilization. China has been expanding visa-free access in recent years."},"Saudi Arabia":{emoji:"🕌",flavor:"Mecca, Neom, the Empty Quarter. Saudi Arabia dramatically expanded tourism access since Vision 2030."},"New Zealand":{emoji:"🌿",flavor:"Lord of the Rings landscapes, Maori culture, fjords. New Zealand is generally welcoming but selective."},"Turkey":{emoji:"🕌",flavor:"Istanbul bridges two continents, Cappadocia glows at dawn. Turkey's arrangements shifted with geopolitical changes."},"Morocco":{emoji:"🏜️",flavor:"Medinas, the Sahara, Atlantic coastline. Morocco has strong ties with Europe and much of the world."},"Singapore":{emoji:"🌆",flavor:"Changi Airport, Gardens by the Bay, a city-state of extraordinary efficiency — but not universal access."},"Argentina":{emoji:"🥩",flavor:"Buenos Aires, Patagonia, the tango, world-class beef. Argentina is broadly open to most of the world."}};
+
+const NOEM={intro:["Step up to the line. Passport and boarding pass out. I've got all day and I will use every second of it.","Shoes off. Laptop out. Dignity: optional. Welcome to Passport Privilege.","I've secured this checkpoint personally. Nobody gets through without my say-so. Nobody."],tierCheck:{1:["Hmm. {country}. That's... fine. I suppose. You can go. Don't make it weird.","{country}. One of the good ones. Don't tell anyone I said that.","You know what, {country} passport holders barely even need me. Move along."],2:["{country}. Solid. Not top tier, but I've seen worse. Today. Much worse.","Alright, {country}. You made the list. Barely, but you made it.","{country}. I had to look that one up. My intern had to look that one up. But you're cleared."],3:["{country}. I'm going to need you to step to the secondary inspection area. And wait.","Mm. {country}. That's going to require some additional scrutiny. Nothing personal. Actually, a little personal.","{country}? I'm going to need to make a call. Just... stand over there. Away from the good travelers."],4:["{country}. I need you to come with me. Bring your bags. All of them. We're going to be here a while.","Let me see that again. {country}? Sir, I'm going to need my supervisor. And her supervisor.","*long pause* {country}. I've been training for this exact situation."]},grantedFree:["I don't like this. You didn't even have to fill out a form. Something feels wrong about that.","Gate's open. Don't get used to it. Some of us work for a living.","Clear to board. I want you to know I checked this three times. Three.","Your passport checks out. I ran it through everything. Twice. Fine. Go.","You're good. I mean, I would've added more paperwork, but nobody asked me."],denied:["Visa required. Application processing time is six to eight weeks. The office is closed. It's Tuesday.","I'm going to need you to step aside. This line is for people who planned ahead.","No visa, no entry. Those are the rules. I didn't make the rules. Well, I made some of them.","Ma'am/sir, I need you to go back to the beginning. Start with a visa application. I'll be here.","Denied. Not by me personally. Well — a little bit by me personally."],unknown:["I don't know what to do with this one. Jenkins! JENKINS! Come look at this passport!","This destination is... complicated. Geopolitically. I'm going to have to escalate this.","I'm not authorized to make a call on this one. Which is unusual. I'm authorized for most things."],finalGood:["You passed. Multiple destinations, minimal drama. Honestly, you're my favorite traveler today. Don't tell the others.","Not bad. Not bad at all. I've stamped worse passports. A lot worse. Don't quote me on that."],finalBad:["The system isn't rigged, it's just... structured. In a specific way. That happens to benefit some passports more than others. That's called order.","I don't make the rules. Okay, I help enforce the rules. Look, someone has to stand at this checkpoint."],finalMixed:["Some wins, some stops. That's travel. That's geopolitics. That's my entire career in a sentence.","You did alright. Not great. But alright. I've given worse debriefs. Much worse."]};
+
+function noem(bank,country){const line=bank[Math.floor(Math.random()*bank.length)];return country?line.replace(/{country}/g,country):line;}
+
+const COUNTRIES=Object.keys(GAME_DATA.c).sort();
+let state={country:null,tier:null,vfCount:0,journey:[],results:[],destPool:[]};
+
+function getTier(n){if(n>=150)return{n:1,label:"Tier 1 — Elite",desc:`${n} destinations visa-free`,cls:'tier-1'};if(n>=100)return{n:2,label:"Tier 2 — Strong",desc:`${n} destinations visa-free`,cls:'tier-2'};if(n>=60)return{n:3,label:"Tier 3 — Moderate",desc:`${n} destinations visa-free`,cls:'tier-3'};return{n:4,label:"Tier 4 — Restricted",desc:`${n} destinations visa-free`,cls:'tier-4'};}
+function getAccess(country,dest){const row=GAME_DATA.a[country];const idx=GAME_DATA.d.indexOf(dest);if(!row||idx<0)return 2;return row[idx];}
+
+let twTimer=null;
+function typewrite(elId,text,speed,onDone){const el=document.getElementById(elId);if(!el)return;clearTimeout(twTimer);el.innerHTML='';let i=0;function tick(){if(i<text.length){el.innerHTML=text.slice(0,i+1)+'<span class="cursor"></span>';i++;twTimer=setTimeout(tick,speed||24);}else{el.innerHTML=text;if(onDone)onDone();}}tick();}
+
+function goTo(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');if(id==='s-journey')setupJourney();}
+
+window.onload=function(){
+  const introText="A passport. Just a booklet, really.\n\nA few dozen pages, a photo, a stamp.\n\nYet this small document determines whether you wait in a visa queue for months, whether you're waved through in seconds, or whether entire continents remain closed to you.\n\nThe Henley Passport Index ranks 199 passports by the number of destinations their holders can enter without a visa.\n\nThe strongest: 192 destinations. The weakest: 24.\n\nAnd standing between you and your flight? One very determined TSA agent.\n\nThis is Passport Privilege.";
+  let lines=introText.split('\n'),lineIdx=0;
+  const narr=document.getElementById('intro-narr');
+  function nextLine(){if(lineIdx>=lines.length){setTimeout(()=>document.getElementById('intro-choices').style.display='flex',400);return;}const line=lines[lineIdx++];if(!line){narr.innerHTML+='<br>';setTimeout(nextLine,200);return;}const span=document.createElement('span');span.style.display='block';narr.appendChild(span);let i=0;function tick(){if(i<line.length){span.textContent=line.slice(0,i+1);i++;setTimeout(tick,20);}else setTimeout(nextLine,280);}tick();}
+  setTimeout(nextLine,500);
+  buildCountryList('');
+};
+
+function buildCountryList(filter){const list=document.getElementById('country-list');const filtered=COUNTRIES.filter(c=>c.toLowerCase().includes(filter.toLowerCase()));list.innerHTML=filtered.slice(0,30).map(c=>`<div class="country-opt" onclick="selectCountry('${c.replace(/'/g,"\\'")}')">  ${c}</div>`).join('');if(filtered.length>30)list.innerHTML+=`<div style="padding:0.4rem 1rem;font-size:0.65rem;color:var(--muted)">...and ${filtered.length-30} more. Keep typing.</div>`;}
+function filterCountries(v){buildCountryList(v);}
+
+let selectedCountry=null;
+function selectCountry(c){selectedCountry=c;document.getElementById('confirm-country-name').textContent=c;document.getElementById('pick-confirm').style.display='block';document.getElementById('country-search').value=c;document.getElementById('country-list').innerHTML='';}
+function resetPick(){selectedCountry=null;document.getElementById('pick-confirm').style.display='none';document.getElementById('country-search').value='';buildCountryList('');}
+
+function confirmPassport(){if(!selectedCountry)return;state.country=selectedCountry;state.vfCount=GAME_DATA.c[selectedCountry]||0;state.tier=getTier(state.vfCount);setupReveal();goTo('s-reveal');}
+
+function setupReveal(){
+  document.getElementById('reveal-country-name').textContent=state.country.toUpperCase();
+  const tc=document.getElementById('reveal-tier-card');tc.className='tier-card '+state.tier.cls;
+  document.getElementById('reveal-tier-name').textContent=state.tier.label;
+  document.getElementById('reveal-tier-count').textContent=state.tier.desc+' · out of 226 destinations';
+  document.getElementById('reveal-agent-line').textContent=noem(NOEM.tierCheck[state.tier.n],state.country);
+  const pct=Math.round((state.vfCount/226)*100);
+  const msgs={1:`You hold one of the world's most powerful passports.\n\n${pct}% of the world is yours without a form to fill. You approach borders with the quiet confidence of someone who has never been told no.\n\nBut tonight, Agent Noem is running the checkpoint. And she takes her job very seriously.`,2:`A strong passport. Solid. Respectable.\n\n${pct}% of destinations welcome you without a visa. You've earned your way into the upper tier through geography and geopolitics decided long before you were born.\n\nAgent Noem has seen your type before. She's not impressed. She's professional.`,3:`A moderate passport. The world is half-open to you.\n\nYou know the feeling of being in the longer queue at immigration. ${pct}% of the world you can enter freely. The rest requires planning, fees, waiting.\n\nAgent Noem has a lot of questions. She always has a lot of questions.`,4:`One of the world's most restricted passports.\n\n${pct}% of destinations are open to you without a visa. The other ${100-pct}%? Each one is a story of paperwork, proof of funds, rejection risk.\n\nAgent Noem was born for this checkpoint. Let's begin.`};
+  typewrite('reveal-narr',msgs[state.tier.n],18,()=>{document.getElementById('reveal-choices').style.display='flex';});
+  state.destPool=[...GAME_DATA.d].sort(()=>Math.random()-0.5);state.journey=[];state.results=[];
+}
+
+function setupJourney(){
+  if(state.journey.length>=5){setupFinal();goTo('s-final');return;}
+  const n=state.journey.length;
+  document.getElementById('journey-progress').style.width=Math.round((n/5)*100)+'%';
+  document.getElementById('dest-num').textContent=n+1;
+  const available=state.destPool.filter(d=>!state.journey.includes(d));
+  const options=available.slice(0,4);
+  const prompts=["The departures board flickers. Agent Noem watches from behind her lectern. Four flights are boarding. Where do you go?","Gate B. Agent Noem is already there. She was always already there. Where are you headed?","You've cleared two checkpoints. Agent Noem is somehow at the next one too. Pick your next destination.","Three stamps. Two more to go. Agent Noem gives you a look that communicates nothing and everything. Choose.","Last gate. Agent Noem straightens her badge. Where's your final destination?"];
+  document.getElementById('journey-prompt').textContent=prompts[n];
+  document.getElementById('dest-grid').innerHTML=options.map(d=>{const info=DEST_INFO[d]||{emoji:'🌍'};return`<button class="dest-pick-btn" onclick="pickDest('${d.replace(/'/g,"\\'")}')"><span class="d-emoji">${info.emoji}</span><span class="d-name">${d}</span></button>`;}).join('');
+}
+
+function pickDest(dest){state.journey.push(dest);const access=getAccess(state.country,dest);setupGate(dest,access);goTo('s-gate');}
+
+function setupGate(dest,access){
+  document.getElementById('gate-progress').style.width=Math.round((state.journey.length/5)*100)+'%';
+  const info=DEST_INFO[dest]||{emoji:'🌍',flavor:''};
+  document.getElementById('gate-dest-name').textContent=`${info.emoji} ${dest}`;
+  document.getElementById('gate-dest-flavor').textContent=info.flavor;
+  const stampTxts={1:['VISA FREE','ENTRY GRANTED','NO VISA REQUIRED'],0:['VISA REQUIRED','APPLY IN ADVANCE','PRIOR AUTHORIZATION'],2:['CHECK REQUIREMENTS','STATUS UNCERTAIN','DATA UNAVAILABLE']};
+  const stampCls={1:'stamp-free',0:'stamp-req',2:'stamp-unk'};
+  const opts=stampTxts[access];
+  setTimeout(()=>{document.getElementById('gate-stamp-wrap').innerHTML=`<span class="stamp ${stampCls[access]}">${opts[Math.floor(Math.random()*opts.length)]}</span>`;},300);
+  setTimeout(()=>{document.getElementById('gate-agent-line').textContent=access===1?noem(NOEM.grantedFree):access===0?noem(NOEM.denied):noem(NOEM.unknown);},700);
+  const country=state.country;
+  const narrs={1:[`The scanner beeps green. Agent Noem's jaw tightens almost imperceptibly.\n\n"You're clear," she says, like it costs her something.\n\nThe gate opens. ${dest} awaits. It really is this easy — for this passport.`,`She holds the document up to the light. Studies it. Scans it again. Types something. Sighs.\n\n"You're good to go."\n\nFor ${country} passport holders, this moment — the green light, the open gate — is ordinary. But it shouldn't feel unremarkable.`,`No form. No queue. No secondary inspection.\n\nAgent Noem waves you through with the barely-contained dignity of someone who has more important travelers to scrutinize.\n\n${dest}. Yours. Just like that.`],0:[`She barely looks up. Just holds out her hand.\n\n"Documentation showing valid visa for ${dest}?"\n\nYou don't have one. No one told you that you needed one — because if you'd held a different passport, you wouldn't have.\n\nAgent Noem gestures toward the exit with practiced efficiency.`,`"${dest} requires prior visa authorization for ${country} passport holders."\n\nShe says it matter-of-factly. The application form is four pages. Processing time is six to eight weeks. The fee is non-refundable.\n\nThe flight boards in twenty minutes. You won't be on it.`,`Another traveler — different passport — walks straight through without stopping.\n\nYou watch them go.\n\nAgent Noem is watching you. "You'll need to step aside. This gate requires documentation you don't have."\n\nThe gate closes.`],2:[`Agent Noem stares at your destination selection. Then at your passport. Then back at the screen.\n\n"Jenkins!" A second agent appears.\n\nFor ${dest}, the situation is complex. Geopolitical shifts have made requirements unstable. She advises you to check official channels before booking.`,`"This one's above my pay grade," she says — which, you suspect, is the first fully honest thing she's said all day.\n\n${dest} entry requirements for ${country} passport holders are in flux. It's not a no. It's not a yes. It's bureaucratic purgatory.`]};
+  const pool=narrs[access];
+  document.getElementById('gate-narr').textContent='';document.getElementById('gate-choices').style.display='none';
+  setTimeout(()=>{typewrite('gate-narr',pool[Math.floor(Math.random()*pool.length)],20,()=>{document.getElementById('gate-choices').style.display='flex';const isLast=state.journey.length>=5;const btn=document.getElementById('gate-continue-btn');btn.textContent=isLast?'Complete the journey →':'Next destination →';btn.onclick=isLast?()=>{setupFinal();goTo('s-final');}:()=>goTo('s-journey');});},900);
+  state.results.push({dest,access});
+}
+
+function setupFinal(){
+  const vf=state.results.filter(r=>r.access===1).length;
+  const req=state.results.filter(r=>r.access===0).length;
+  document.getElementById('final-title').textContent=state.country.toUpperCase();
+  document.getElementById('final-stats').innerHTML=`<div class="stat-box"><div class="stat-num" style="color:#27ae60">${vf}</div><div class="stat-label">Visa-free entries</div></div><div class="stat-box"><div class="stat-num" style="color:#e74c3c">${req}</div><div class="stat-label">Visas required</div></div><div class="stat-box"><div class="stat-num" style="color:var(--gold2)">${state.vfCount}</div><div class="stat-label">Global visa-free score</div></div><div class="stat-box"><div class="stat-num" style="color:var(--muted)">${226-state.vfCount}</div><div class="stat-label">Destinations need visa</div></div>`;
+  const finalPool=vf>=4?NOEM.finalGood:req>=3?NOEM.finalBad:NOEM.finalMixed;
+  document.getElementById('final-agent-line').textContent=noem(finalPool);
+  const pct=Math.round((state.vfCount/226)*100);
+  const codas={1:vf>=4?`Five destinations. ${vf} open, ${req} closed.\n\nFor you, the barriers are exceptions. You plan trips around interest, not around bureaucracy. Even Agent Noem could only slow you down — not stop you.\n\nAcross the world, 1.4 billion people hold passports with fewer than 60 visa-free destinations. For them, international travel begins with hope and paperwork.`:`Even the strongest passports hit walls.\n\nYour ${state.vfCount} visa-free destinations still leave ${226-state.vfCount} requiring advance planning. Power is relative. Geography is the silent variable. And Agent Noem takes the exceptions very seriously.`,2:`A solid result. But you've felt both sides tonight.\n\nWith ${state.vfCount} visa-free destinations, you sit in the upper quarter of all passport holders — but the gap between you and the very top is wider than it appears from the inside of the line.`,3:`${req} stops out of five.\n\nThis is close to the average experience for a passport in your tier. Over half the world's population holds a document with fewer than 100 visa-free destinations. The queue, the fee, the wait — ordinary.\n\nAgent Noem, for all her theatrics, is just a stand-in for a system that was never designed with you in mind.`,4:`This is the daily reality for holders of the world's most restricted passports.\n\nWith just ${state.vfCount} visa-free destinations, every international trip begins with weeks of preparation and the real possibility of a no. Not once. Every single time.\n\nAgent Noem is just the face at the counter. The system behind her is the point.`};
+  typewrite('final-narr',codas[state.tier.n],16);
+  document.getElementById('final-dest-list').innerHTML=state.results.map(r=>{const info=DEST_INFO[r.dest]||{emoji:'🌍'};const labels={1:'<span class="stamp stamp-free" style="transform:none;font-size:0.6rem;padding:0.15rem 0.5rem">FREE</span>',0:'<span class="stamp stamp-req" style="transform:none;font-size:0.6rem;padding:0.15rem 0.5rem">VISA</span>',2:'<span class="stamp stamp-unk" style="transform:none;font-size:0.6rem;padding:0.15rem 0.5rem">?</span>'};return`<div class="result-dest"><span class="result-dest-name">${info.emoji} ${r.dest}</span>${labels[r.access]}</div>`;}).join('');
+  const allSorted=Object.entries(GAME_DATA.c).sort((a,b)=>b[1]-a[1]);
+  const maxScore=192;
+  const barColors={1:'#d4af37',2:'#4a9eda',3:'#e67e22',4:'#e74c3c'};
+  const compareSet=[allSorted[0],allSorted[4],allSorted[24],[state.country,state.vfCount],allSorted[allSorted.length-25],allSorted[allSorted.length-1]].filter((v,i,a)=>a.findIndex(x=>x[0]===v[0])===i);
+  document.getElementById('compare-list').innerHTML=compareSet.map(([c,sc])=>{const t=getTier(sc);const isUser=c===state.country;const barW=Math.round((sc/maxScore)*100);return`<div class="compare-row" ${isUser?'style="background:rgba(180,140,60,0.08)"':''}><div style="width:28px;font-size:0.6rem;color:${isUser?'var(--gold2)':'var(--muted)'};">${isUser?'YOU':'·'}</div><div class="compare-country" style="${isUser?'color:var(--gold2)':''}">${c}</div><div class="compare-bar-wrap"><div class="compare-bar" style="width:${barW}%;background:${barColors[t.n]}"></div></div><div class="compare-count">${sc}</div></div>`;}).join('');
+  document.getElementById('final-coda').textContent="Data: Henley Passport Index, March 2026. Russia and Turkey data may reflect geopolitical changes. Agent Noem is a fictional character. Visa requirements change without notice.";
+}
+
+function restart(){selectedCountry=null;state={country:null,tier:null,vfCount:0,journey:[],results:[],destPool:[]};document.getElementById('country-search').value='';document.getElementById('pick-confirm').style.display='none';buildCountryList('');goTo('s-pick');}
+</script>
